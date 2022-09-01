@@ -1,0 +1,5 @@
+#!/bin/bash
+set -e
+cd $(dirname $0)
+cd ../examples/helloworld
+go run greeter_client/main.go --addr $1 --name foo

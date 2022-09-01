@@ -1,0 +1,177 @@
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: grpc-server-namespace-ui
+  labels:
+    environment: dev
+---
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: grpc-client-namespace-ui
+  labels:
+    environment: dev
+---
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: grpc-server-sa-ui
+  namespace: grpc-server-namespace-ui
+  annotations:
+    iam.gke.io/gcp-service-account: ${PROJNUM}-compute@developer.gserviceaccount.com
+---
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: grpc-client-sa-ui
+  namespace: grpc-client-namespace-ui
+  annotations:
+    iam.gke.io/gcp-service-account: ${PROJNUM}-compute@developer.gserviceaccount.com
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: appconfig
+  namespace: grpc-server-namespace-ui
+data:
+  GRPC_CONFIG_OBSERVABILITY: |
+    {
+      "enable_cloud_monitoring": true,
+      "enable_cloud_trace": true,
+      "enable_cloud_logging": true,
+      "destination_project_id": "${PROJECT}",
+      "log_filters": [{
+        "pattern": "*",
+        "header_bytes": 4096,
+        "message_bytes": 4096
+      }],
+      "global_trace_sampling_rate": 1.00,
+      "custom_tags": {
+        "grpc_server" : "true"
+      }
+    }
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: appconfig
+  namespace: grpc-client-namespace-ui
+data:
+  GRPC_CONFIG_OBSERVABILITY: |
+    {
+      "enable_cloud_monitoring": true,
+      "enable_cloud_trace": true,
+      "enable_cloud_logging": true,
+      "destination_project_id": "${PROJECT}",
+      "log_filters": [{
+        "pattern": "*",
+        "header_bytes": 4096,
+        "message_bytes": 4096
+      }],
+      "global_trace_sampling_rate": 1.00,
+      "custom_tags": {
+        "grpc_client": "true"
+      }
+    }
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: grpc-server-service-ui
+  namespace: grpc-server-namespace-ui
+  labels:
+    k8s-app: grpc-server-app-ui
+spec:
+  ports:
+  - name: helloworld
+    port: 8080
+    protocol: TCP
+    targetPort: 50051
+  selector:
+    k8s-app: example-grpc-server-ui
+  type: ClusterIP
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: grpc-server-deployment-ui
+  namespace: grpc-server-namespace-ui
+  labels:
+    k8s-app: grpc-server-app-ui
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      k8s-app: grpc-server-app-ui
+  strategy: {}
+  template:
+    metadata:
+      labels:
+        k8s-app: grpc-server-app-ui
+    spec:
+      containers:
+      - image: gcr.io/${PROJECT}/o11y-examples-go:1.50.0-dev
+        imagePullPolicy: Always
+        name: &container1 grpc-server-container-ui
+        env:
+        - name: CONTAINER_NAME
+          value: *container1
+        - name: NAMESPACE
+          valueFrom:
+            fieldRef:
+              fieldPath: metadata.namespace
+        envFrom:
+        - configMapRef:
+            name: appconfig
+        ports:
+        - protocol: TCP
+          containerPort: 50051
+        resources:
+          limits:
+            cpu: 800m
+            memory: 512Mi
+          requests:
+            cpu: 100m
+            memory: 512Mi
+      serviceAccountName: grpc-server-sa-ui
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: grpc-client-deployment-ui
+  namespace: grpc-client-namespace-ui
+  labels:
+    k8s-app: grpc-client-app-ui
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      k8s-app: grpc-client-app-ui
+  strategy: {}
+  template:
+    metadata:
+      labels:
+        k8s-app: grpc-client-app-ui
+    spec:
+      containers:
+      - image: gcr.io/${PROJECT}/o11y-examples-go:1.50.0-dev
+        imagePullPolicy: Always
+        name: &container2 grpc-client-container-ui
+        env:
+        - name: CONTAINER_NAME
+          value: *container2
+        - name: NAMESPACE
+          valueFrom:
+            fieldRef:
+              fieldPath: metadata.namespace
+        envFrom:
+        - configMapRef:
+            name: appconfig
+        resources:
+          limits:
+            cpu: 800m
+            memory: 512Mi
+          requests:
+            cpu: 100m
+            memory: 512Mi
+      serviceAccountName: grpc-client-sa-ui

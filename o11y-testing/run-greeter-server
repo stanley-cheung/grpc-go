@@ -1,0 +1,6 @@
+#!/bin/bash
+set -e
+cat /etc/hosts
+cd $(dirname $0)
+cd ../examples/helloworld
+go run greeter_server/main.go

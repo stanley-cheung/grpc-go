@@ -27,6 +27,7 @@ import (
 	"net"
 
 	"google.golang.org/grpc"
+	"google.golang.org/grpc/gcp/observability"
 	pb "google.golang.org/grpc/examples/helloworld/helloworld"
 )
 
@@ -46,6 +47,8 @@ func (s *server) SayHello(ctx context.Context, in *pb.HelloRequest) (*pb.HelloRe
 }
 
 func main() {
+	observability.Start(context.Background())
+	defer observability.End()
 	flag.Parse()
 	lis, err := net.Listen("tcp", fmt.Sprintf(":%d", *port))
 	if err != nil {
