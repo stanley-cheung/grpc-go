@@ -1,4 +1,7 @@
 #!/bin/bash -x
 
+set -e
+cd "$(dirname "$0")"
+
 # now delete our deployment of service and client
-kubectl delete -f o11y-testing/gke-deployment.yaml
+kubectl delete -f ./gke-deployment.yaml

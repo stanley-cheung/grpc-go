@@ -1,5 +1,8 @@
 #!/bin/bash -x
 
+set -e
+cd "$(dirname "$0")"
+
 export PROJECT=`gcloud config get-value project`
 export PROJNUM=`gcloud projects describe $PROJECT --format="value(projectNumber)"`
 KUBECTL_CONFIG=`kubectl config get-clusters |grep $PROJECT`
@@ -14,4 +17,4 @@ kubectl config set-context $KUBECTL_CONFIG
 kubectl config use-context $KUBECTL_CONFIG
 
 # deploy
-cat o11y-testing/gke-deployment.yaml | envsubst | kubectl apply -f -
+cat ./gke-deployment.yaml | envsubst | kubectl apply -f -
