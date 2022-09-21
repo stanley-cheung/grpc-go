@@ -14,4 +14,9 @@ RUN pip3 install google-cloud-monitoring \
   google-cloud-logging \
   google-auth
 
+WORKDIR /grpc-go/examples/helloworld
+
+RUN go build greeter_server/main.go
+RUN go build greeter_client/main.go
+
 CMD ["/bin/sleep", "inf"]
