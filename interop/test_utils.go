@@ -901,6 +901,7 @@ func (s *testServer) StreamingInputCall(stream testgrpc.TestService_StreamingInp
 
 func (s *testServer) FullDuplexCall(stream testgrpc.TestService_FullDuplexCallServer) error {
 	logger.Info("In grpc-go custom interop server FullDuplexCall")
+	return status.Error(codes.DataLoss, "some custom PingPong error")
 	if md, ok := metadata.FromIncomingContext(stream.Context()); ok {
 		if initialMetadata, ok := md[initialMetadataKey]; ok {
 			header := metadata.Pairs(initialMetadataKey, initialMetadata[0])
