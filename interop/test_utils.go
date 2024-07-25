@@ -28,7 +28,6 @@ import (
 	"context"
 	"fmt"
 	"io"
-	"net"
 	"os"
 	"strings"
 	"sync"
@@ -902,11 +901,12 @@ func (s *testServer) StreamingInputCall(stream testgrpc.TestService_StreamingInp
 
 func (s *testServer) FullDuplexCall(stream testgrpc.TestService_FullDuplexCallServer) error {
 	logger.Info("In grpc-go custom interop server FullDuplexCall")
-	serverAddr := net.JoinHostPort("bla", "50061")
+	serverAddr := "google-c2p:///grpc-directpath.googleapis.com"
 	var opts []grpc.DialOption
+	opts = append(opts, grpc.WithCredentialsBundle(google.NewComputeEngineCredentials()))
 	_, err := grpc.Dial(serverAddr, opts...)
 	if err != nil {
-		logger.Fatalf("Fail to dial: %v", err)
+		return status.Error(codes.DataLoss, err.Error())
 	}
 	return status.Error(codes.DataLoss, "some custom PingPong error")
 	if md, ok := metadata.FromIncomingContext(stream.Context()); ok {
