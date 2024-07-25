@@ -904,7 +904,7 @@ func (s *testServer) FullDuplexCall(stream testgrpc.TestService_FullDuplexCallSe
 	logger.Info("In grpc-go custom interop server FullDuplexCall")
 	serverAddr := net.JoinHostPort("bla", "50061")
 	var opts []grpc.DialOption
-	conn, err := grpc.Dial(serverAddr, opts...)
+	_, err := grpc.Dial(serverAddr, opts...)
 	if err != nil {
 		logger.Fatalf("Fail to dial: %v", err)
 	}
