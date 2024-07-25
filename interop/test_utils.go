@@ -28,6 +28,7 @@ import (
 	"context"
 	"fmt"
 	"io"
+	"net"
 	"os"
 	"strings"
 	"sync"
@@ -901,6 +902,12 @@ func (s *testServer) StreamingInputCall(stream testgrpc.TestService_StreamingInp
 
 func (s *testServer) FullDuplexCall(stream testgrpc.TestService_FullDuplexCallServer) error {
 	logger.Info("In grpc-go custom interop server FullDuplexCall")
+	serverAddr := net.JoinHostPort("bla", "50061")
+	var opts []grpc.DialOption
+	conn, err := grpc.Dial(serverAddr, opts...)
+	if err != nil {
+		logger.FatalF("Fail to dial: %v", err)
+	}
 	return status.Error(codes.DataLoss, "some custom PingPong error")
 	if md, ok := metadata.FromIncomingContext(stream.Context()); ok {
 		if initialMetadata, ok := md[initialMetadataKey]; ok {
