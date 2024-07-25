@@ -906,7 +906,7 @@ func (s *testServer) FullDuplexCall(stream testgrpc.TestService_FullDuplexCallSe
 	var opts []grpc.DialOption
 	conn, err := grpc.Dial(serverAddr, opts...)
 	if err != nil {
-		logger.FatalF("Fail to dial: %v", err)
+		logger.Fatalf("Fail to dial: %v", err)
 	}
 	return status.Error(codes.DataLoss, "some custom PingPong error")
 	if md, ok := metadata.FromIncomingContext(stream.Context()); ok {
