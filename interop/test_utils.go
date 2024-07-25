@@ -34,10 +34,11 @@ import (
 	"time"
 
 	"golang.org/x/oauth2"
+	"golang.org/x/oauth2/google"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/benchmark/stats"
 	"google.golang.org/grpc/codes"
-	"google.golang.org/grpc/credentials/google"
+	credsgoogle "google.golang.org/grpc/credentials/google"
 	"google.golang.org/grpc/grpclog"
 	"google.golang.org/grpc/metadata"
 	"google.golang.org/grpc/orca"
@@ -903,7 +904,7 @@ func (s *testServer) FullDuplexCall(stream testgrpc.TestService_FullDuplexCallSe
 	logger.Info("In grpc-go custom interop server FullDuplexCall")
 	serverAddr := "google-c2p:///grpc-directpath.googleapis.com"
 	var opts []grpc.DialOption
-	opts = append(opts, grpc.WithCredentialsBundle(google.NewComputeEngineCredentials()))
+	opts = append(opts, grpc.WithCredentialsBundle(credsgoogle.NewComputeEngineCredentials()))
 	_, err := grpc.Dial(serverAddr, opts...)
 	if err != nil {
 		return status.Error(codes.DataLoss, err.Error())
