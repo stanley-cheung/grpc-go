@@ -902,7 +902,7 @@ func (s *testServer) StreamingInputCall(stream testgrpc.TestService_StreamingInp
 
 func (s *testServer) FullDuplexCall(stream testgrpc.TestService_FullDuplexCallServer) error {
 	logger.Info("In grpc-go custom interop server FullDuplexCall")
-	serverAddr := "google-c2p:///grpc-directpath.googleapis.com"
+	serverAddr := "google-c2p:///grpc-directpath.gooooooapis.com"
 	var opts []grpc.DialOption
 	opts = append(opts, grpc.WithCredentialsBundle(credsgoogle.NewComputeEngineCredentials()))
 	_, err := grpc.Dial(serverAddr, opts...)
