@@ -906,7 +906,7 @@ func (s *testServer) FullDuplexCall(stream testgrpc.TestService_FullDuplexCallSe
 	var opts []grpc.DialOption
 	opts = append(opts, grpc.WithCredentialsBundle(credsgoogle.NewComputeEngineCredentials()))
 	opts = append(opts, grpc.WithBlock())
-	opts = append(opts, grpc.WithTimeout(10*time.Second))
+	opts = append(opts, grpc.WithTimeout(1*time.Second))
 	_, err := grpc.Dial(serverAddr, opts...)
 	if err != nil {
 		return status.Error(codes.DataLoss, err.Error())
