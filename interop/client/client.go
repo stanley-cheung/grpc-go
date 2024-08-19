@@ -151,6 +151,7 @@ func parseAdditionalMetadataFlag() []string {
 
 func main() {
 	flag.Parse()
+	logger.Fatal("some custom error from Main()")
 	logger.Infof("Client running with test case %q", *testCase)
 	var useGDC bool // use google default creds
 	var useCEC bool // use compute engine creds
