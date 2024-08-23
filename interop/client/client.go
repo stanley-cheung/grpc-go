@@ -151,8 +151,6 @@ func parseAdditionalMetadataFlag() []string {
 
 func main() {
 	flag.Parse()
-	logger.Infof("some custom error from Main()")
-	os.Exit(41)
 	logger.Infof("Client running with test case %q", *testCase)
 	var useGDC bool // use google default creds
 	var useCEC bool // use compute engine creds
@@ -268,6 +266,8 @@ func main() {
 		logger.Fatalf("Fail to dial: %v", err)
 	}
 	defer conn.Close()
+	logger.Infof("some custom error from Main() chk043")
+	os.Exit(43)
 	tc := testgrpc.NewTestServiceClient(conn)
 	ctxWithDeadline, cancel := context.WithTimeout(ctx, time.Duration(*soakOverallTimeoutSeconds)*time.Second)
 	defer cancel()
