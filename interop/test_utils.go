@@ -180,9 +180,9 @@ func DoServerStreaming(ctx context.Context, tc testgrpc.TestServiceClient, args 
 
 // DoPingPong performs ping-pong style bi-directional streaming RPC.
 func DoPingPong(ctx context.Context, tc testgrpc.TestServiceClient, args ...grpc.CallOption) {
-	logger.Infol("some custom PingPong error message here...")
+	logger.Info("some custom PingPong error message here...")
 	stream, err := tc.FullDuplexCall(ctx, args...)
-	logger.Infof("some custom error from Main() chk044")
+	logger.Info("some custom error from Main() chk044")
 	if err != nil {
 		logger.Fatalf("%v.FullDuplexCall(_) = _, %v", tc, err)
 		os.Exit(44)
