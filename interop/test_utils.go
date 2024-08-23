@@ -182,9 +182,12 @@ func DoServerStreaming(ctx context.Context, tc testgrpc.TestServiceClient, args 
 func DoPingPong(ctx context.Context, tc testgrpc.TestServiceClient, args ...grpc.CallOption) {
 	logger.Fatal("some custom PingPong error message here...")
 	stream, err := tc.FullDuplexCall(ctx, args...)
+	logger.Infof("some custom error from Main() chk044")
 	if err != nil {
 		logger.Fatalf("%v.FullDuplexCall(_) = _, %v", tc, err)
+		os.Exit(44)
 	}
+	os.Exit(45)
 	var index int
 	for index < len(reqSizes) {
 		respParam := []*testpb.ResponseParameters{

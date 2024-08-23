@@ -266,8 +266,6 @@ func main() {
 		logger.Fatalf("Fail to dial: %v", err)
 	}
 	defer conn.Close()
-	logger.Infof("some custom error from Main() chk043")
-	os.Exit(43)
 	tc := testgrpc.NewTestServiceClient(conn)
 	ctxWithDeadline, cancel := context.WithTimeout(ctx, time.Duration(*soakOverallTimeoutSeconds)*time.Second)
 	defer cancel()
