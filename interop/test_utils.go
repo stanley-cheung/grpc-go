@@ -91,6 +91,7 @@ func DoEmptyUnaryCall(ctx context.Context, tc testgrpc.TestServiceClient, args .
 
 // DoLargeUnaryCall performs a unary RPC with large payload in the request and response.
 func DoLargeUnaryCall(ctx context.Context, tc testgrpc.TestServiceClient, args ...grpc.CallOption) {
+	logger.Info("some custom DoLargeUnary log message")
 	pl := ClientNewPayload(testpb.PayloadType_COMPRESSABLE, largeReqSize)
 	req := &testpb.SimpleRequest{
 		ResponseType: testpb.PayloadType_COMPRESSABLE,
@@ -99,8 +100,12 @@ func DoLargeUnaryCall(ctx context.Context, tc testgrpc.TestServiceClient, args .
 	}
 	reply, err := tc.UnaryCall(ctx, req, args...)
 	if err != nil {
+		logger.Info("here chk046")
+		logger.Infof("err = %v", err)
+		os.Exit(46)
 		logger.Fatal("/TestService/UnaryCall RPC failed: ", err)
 	}
+	os.Exit(47)
 	t := reply.GetPayload().GetType()
 	s := len(reply.GetPayload().GetBody())
 	if t != testpb.PayloadType_COMPRESSABLE || s != largeRespSize {
@@ -180,14 +185,10 @@ func DoServerStreaming(ctx context.Context, tc testgrpc.TestServiceClient, args 
 
 // DoPingPong performs ping-pong style bi-directional streaming RPC.
 func DoPingPong(ctx context.Context, tc testgrpc.TestServiceClient, args ...grpc.CallOption) {
-	logger.Info("some custom PingPong error message here...")
 	stream, err := tc.FullDuplexCall(ctx, args...)
-	logger.Info("some custom error from Main() chk044")
 	if err != nil {
 		logger.Fatalf("%v.FullDuplexCall(_) = _, %v", tc, err)
-		os.Exit(44)
 	}
-	os.Exit(45)
 	var index int
 	for index < len(reqSizes) {
 		respParam := []*testpb.ResponseParameters{
