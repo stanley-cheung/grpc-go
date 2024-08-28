@@ -100,15 +100,11 @@ func DoLargeUnaryCall(ctx context.Context, tc testgrpc.TestServiceClient, args .
 	}
 	reply, err := tc.UnaryCall(ctx, req, args...)
 	if err != nil {
-		logger.Info("here chk046")
-		logger.Infof("err = %v", err)
-		os.Exit(46)
 		logger.Fatal("/TestService/UnaryCall RPC failed: ", err)
 	}
 	t := reply.GetPayload().GetType()
 	s := len(reply.GetPayload().GetBody())
-	logger.Info("checking large_unary response size %d", s)
-	os.Exit(27)
+	logger.Infof("checking large_unary response size %d", s)
 	if t != testpb.PayloadType_COMPRESSABLE || s != largeRespSize {
 		logger.Fatalf("Got the reply with type %d len %d; want %d, %d", t, s, testpb.PayloadType_COMPRESSABLE, largeRespSize)
 	}
